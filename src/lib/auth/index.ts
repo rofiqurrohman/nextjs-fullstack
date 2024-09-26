@@ -45,20 +45,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
     Google,
   ],
-  callbacks: {
-    // session: ({ session, token, user }) => {
-    //   console.log("Session Callback", { session, token, user });
-
-    //   return {
-    //     ...session,
-    //     // data: 'yoi bro'
-    //   };
-    // },
-    // authorized({ auth }) {
-    //   const isAuthenticated = !!auth?.user;
-
-    //   return isAuthenticated;
-    // },
-  },
+  callbacks: {},
   session: { strategy: "jwt" },
 });

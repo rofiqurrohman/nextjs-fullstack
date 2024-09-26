@@ -10,11 +10,9 @@ export const appRouter = router({
   }),
 
   user: authedProcedure.query(async ({ ctx }) => {
-    // console.log('check ctx trpc :', ctx);
     
     const user = await prisma.user.findUnique({
       where: { email: ctx.session?.user?.email as string },
-      // where: { id: 'cm1gjmsf40000gmni43hdb13m' },
     });
 
     if (!user) {
