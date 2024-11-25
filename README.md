@@ -1,6 +1,6 @@
 ## Nextjs Fullstack
 
-This is a project nextjs fullstack template
+This is a project nextjs fullstack based role auth with token jwt template
 
 ### Local Development
 
@@ -23,9 +23,9 @@ bun dev
 - [Next.js](https://nextjs.org/)
 - [Typescript](https://www.typescriptlang.org/)
 - [Prisma](https://www.prisma.io/docs/orm)
-- [Auth.js](https://authjs.dev/)
 - [tRPC](https://trpc.io/)
 - [Tailwind](https://tailwindcss.com/)
+- Auth Native
 
 ### Contributing
 
