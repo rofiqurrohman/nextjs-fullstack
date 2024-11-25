@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+  PARENT
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      Role
+  createdAt DateTime @default(now())
+
+  Admin   Admin?
+  Teacher Teacher?
+  Student Student?
+  Parent  Parent?
+}
+
+model Admin {
+  id     Int    @id @default(autoincrement())
+  name   String
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int    @unique
+}
+
+model Teacher {
+  id     Int    @id @default(autoincrement())
+  name   String
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int    @unique
+
+  Classes   Class[]
+  Subjects  Subject[]
+  Schedules Schedule[]
+}
+
+model Student {
+  id     Int    @id @default(autoincrement())
+  name   String
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int    @unique
+
+  Classes    Class[]      @relation("StudentClasses")
+  Attendance Attendance[]
+  Results    Result[]
+  Grades     Grade[]
+  Parent     Parent?      @relation(fields: [parentId], references: [id])
+  parentId   Int?
+}
+
+model Parent {
+  id     Int    @id @default(autoincrement())
+  name   String
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int    @unique
+
+  Student Student[]
+}
+
+model Class {
+  id        Int      @id @default(autoincrement())
+  name      String
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+  teacherId Int
+  createdAt DateTime @default(now())
+
+  Subjects Subject[]
+  Students Student[]  @relation("StudentClasses")
+  Schedule Schedule[]
+}
+
+model Subject {
+  id        Int     @id @default(autoincrement())
+  name      String
+  class     Class   @relation(fields: [classId], references: [id])
+  classId   Int
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacherId Int
+
+  Schedule   Schedule[]
+  Assignment Assignment[]
+  Grades     Grade[]
+  Exams      Exam[]
+}
+
+model Schedule {
+  id         Int          @id @default(autoincrement())
+  class      Class        @relation(fields: [classId], references: [id])
+  classId    Int
+  subject    Subject      @relation(fields: [subjectId], references: [id])
+  subjectId  Int
+  teacher    Teacher      @relation(fields: [teacherId], references: [id])
+  teacherId  Int
+  day        String
+  startTime  DateTime
+  endTime    DateTime
+  Attendance Attendance[]
+}
+
+model Assignment {
+  id          Int      @id @default(autoincrement())
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  subjectId   Int
+  title       String
+  description String
+  dueDate     DateTime
+  createdAt   DateTime @default(now())
+  Grade       Grade[]
+}
+
+model Grade {
+  id           Int        @id @default(autoincrement())
+  student      Student    @relation(fields: [studentId], references: [id])
+  studentId    Int
+  subject      Subject    @relation(fields: [subjectId], references: [id])
+  subjectId    Int
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  assignmentId Int
+  grade        Float
+}
+
+model Exam {
+  id        Int      @id @default(autoincrement())
+  subject   Subject  @relation(fields: [subjectId], references: [id])
+  subjectId Int
+  title     String
+  date      DateTime
+  maxScore  Float
+  createdAt DateTime @default(now())
+
+  Results Result[]
+}
+
+model Result {
+  id        Int     @id @default(autoincrement())
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+  exam      Exam    @relation(fields: [examId], references: [id])
+  examId    Int
+  score     Float
+  grade     String
+}
+
+model Attendance {
+  id         Int      @id @default(autoincrement())
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  Int
+  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+  scheduleId Int
+  status     String
+  date       DateTime
+}
